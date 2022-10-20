@@ -1,19 +1,49 @@
 ---
-title: "linear-mixed-effect-models"
-author: "Nick Freeland"
+title: "Linear Mixed Effect Models"
+author: "Nick Freeland, Bernice Green, Gary Marmon"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-# load packages here
+## Introduction
+Intro 
+
+
+## Methods
+
+Methods
+
+$$
+example: M_n(x) = \sum_{i=1}^{n} W_n (X_i) Y_i  \tag{1}
+$$
+
+
+## Analysis and Results
+### Data and Vizualisation
+A study was conducted to determine how...
+
+```{r, warning=FALSE, echo=T, message=FALSE}
+# loading packages 
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(ggrepel)
+library(dslabs)
+library(GLMsData)
+library(ggfortify)
+```
+
+
+```{r, warning=FALSE, echo=TRUE}
+# Load Data
+
+  
 
 ```
 
-Start of Linear Mixed Effect Models Project
+### Statistical Modeling
 
-```{r}
+### Conlusion
 
-```
+## References
 
