@@ -8,6 +8,11 @@ output: html_document
 ## Introduction
 Intro 
 
+## Literature Review
+lit review
+
+## Data
+describe dataset(s)
 
 ## Methods
 
