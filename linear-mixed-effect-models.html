@@ -642,6 +642,19 @@ interactions in mixed designs with replications, it is critical to
 include the random slope corresponding to the highest-order combination
 of within-subject factors subsumed by each interaction of interest”
 (Barr 2013).</p>
+<p>Brown VA gives a theoretical practical account of implementing
+mixed-effects models and their commonalities and differences with ANOVA,
+showing ANOVA cannot simultaneously take multiple sources of variation
+into account when observations are nested across participants, which
+lowers the ability to detect an effect (Brown 2021). Mixed-effects
+modeling allows a researcher to examine the condition of interest while
+also considering variability within and across participants and items
+simultaneously and is a reasonable choice when ANOVA and multiple
+regression are not (Brown 2021). Mixed-effects models are called “mixed”
+because they simultaneously model fixed and random effects. Fixed
+effects model average trends, while random effects model the extent to
+which these trends vary across levels of some grouping factor (Brown
+2021).</p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -653,7 +666,8 @@ pbp &lt;- nflreadr::load_pbp(2021)
 # team summaries 
 pbp |&gt;
   filter(rush == 1 | pass == 1, !is.na(down)) |&gt;
-  mutate(coach = ifelse(posteam_type == &#39;home&#39;,home_coach,away_coach)) |&gt;
+  mutate(coach = ifelse(posteam_type == &#39;home&#39;,home_coach,away_coach),
+         point_diff = ) |&gt;
   group_by(posteam, posteam_type) |&gt;
   summarize(coach_name = first(coach),
             plays = n(),
@@ -2560,11 +2574,7 @@ David Culley
 </div>
 <div id="methods" class="section level2">
 <h2>Methods</h2>
-<p>Just as a linear model is described by the distribution of a
-vector-valued random response variable, Y, whose observed value is <span class="math inline">\(y_{obs}\)</span>, a linear mixed model is
-described by the distribution of two vector-valued random variables:
-<span class="math inline">\(Y\)</span>, the response, and <span class="math inline">\(\beta\)</span>, the vector of random effects. In a
-linear model the distribution of Y is multivariate normal,</p>
+<pre><code>Just as a linear model is described by the distribution of a vector-valued random response variable, Y, whose observed value is $y_{obs}$, a linear mixed model is described by the distribution of two vector-valued random variables: $Y$, the response, and $\beta$, the vector of random effects. In a linear model the distribution of Y is multivariate normal,</code></pre>
 <p><span class="math display">\[
 Y ∼ N(Xβ + o, σ^2 W^{-1})
 \]</span></p>

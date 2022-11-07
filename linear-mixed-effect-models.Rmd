@@ -13,7 +13,8 @@ Intro
   Many technical papers have delved into the formulation and implementation of linear mixed-effects models, many following the lead of Bates et al. paper, "Fitting linear mixed-effects models using lme4" (2014). Bates et al. outlines the creation and implementation of the lme4 package as an extension of lmer function, which has become the predominant tool in the R language for fitting linear mixed-effect models. As for most model-fitting functions in R, the model is described in an lmer call by a formula, in this case including both fixed- and random-effects terms (Bates et al. 2014). The paper describes the structure of the model, the steps in evaluating the profiled deviance or REML criterion, and the structure of classes or types that represents such a model (Bates et al. 2014). One of the more controversial design decisions of lme4 has been to omit the output of p values (these can be found using parametric bootstrapping functionality). "While the null distributions (and the sampling distributions of non-null estimates) are asymptotically normal, these distributions are not t distributed for finite size samples — nor are the corresponding null distributions of differences in scaled deviances F distributed." (Bates et al. 2014). A common problem in mixed-model inference is the lack of analytical results for parameter estimates in complex situations including unbalanced or crossed designs. (Bates et al. 2014)
   
   The complex nature of mixed-effects models call into question the robustness of these models and brings more focus to the model assumptions. "Mixed-effects models involve complex fitting procedures and make several assumptions, in particular about the distribution of residual and random effects. Violations of these assumptions are common in real datasets, yet it is not always clear how much these violations matter to accurate and unbiased estimation" (Schielzeth et al. 2020).  Schielzeth et al. discuss the consequences of violations of these assumptions and the impact of missing random effect components on model estimates. The study found mixed-effects models to be very robust to violations of these assumptions, finding the estimates were unbiased (although imprecise) and missing random effect predictors had little effect on the fixed effect estimates but had systematic effects on the estimates of random effects (Schielzeth et al. 2020). The critical slope of mixed-effects models id also oft discussed in literature, finding failure to include the critical slope in the test of an interaction can yield very high Type I error rates (Barr 2013). "When testing interactions in mixed designs with replications, it is critical to include the random slope corresponding to the highest-order combination of within-subject factors subsumed by each interaction of interest" (Barr 2013).
-  
+    
+  Brown VA gives a theoretical practical account of implementing mixed-effects models and their commonalities and differences with ANOVA, showing ANOVA cannot simultaneously take multiple sources of variation into account when observations are nested across participants, which lowers the ability to detect an effect (Brown 2021). Mixed-effects modeling allows a researcher to examine the condition of interest while also considering variability within and across participants and items simultaneously and is a reasonable choice when ANOVA and multiple regression are not (Brown 2021). Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects model average trends, while random effects model the extent to which these trends vary across levels of some grouping factor (Brown 2021).
 
 ## Data
 
@@ -33,7 +34,8 @@ pbp <- nflreadr::load_pbp(2021)
 # team summaries 
 pbp |>
   filter(rush == 1 | pass == 1, !is.na(down)) |>
-  mutate(coach = ifelse(posteam_type == 'home',home_coach,away_coach)) |>
+  mutate(coach = ifelse(posteam_type == 'home',home_coach,away_coach),
+         point_diff = ) |>
   group_by(posteam, posteam_type) |>
   summarize(coach_name = first(coach),
             plays = n(),
@@ -52,7 +54,7 @@ pbp |>
 
 ## Methods
 
-Just as a linear model is described by the distribution of a vector-valued random response variable, Y, whose observed value is $y_{obs}$, a linear mixed model is described by the distribution of two vector-valued random variables: $Y$, the response, and $\beta$, the vector of random effects. In a linear model the distribution of Y is multivariate normal,
+    Just as a linear model is described by the distribution of a vector-valued random response variable, Y, whose observed value is $y_{obs}$, a linear mixed model is described by the distribution of two vector-valued random variables: $Y$, the response, and $\beta$, the vector of random effects. In a linear model the distribution of Y is multivariate normal,
 
 $$
 Y ∼ N(Xβ + o, σ^2 W^{-1})
