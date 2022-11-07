@@ -655,6 +655,24 @@ because they simultaneously model fixed and random effects. Fixed
 effects model average trends, while random effects model the extent to
 which these trends vary across levels of some grouping factor (Brown
 2021).</p>
+<p>Until more recently the only way to handle the type of data
+mixed-effects model does was through repeated measures ANOVAs (Brown
+2021). Mixed-effects models are much more versatile in handling
+variability within and across groups and can handle missing data,
+providing much better results than the ANOVAs (Brown 2021). The main
+application for mixed-effect models is in psychology due to the nature
+of their data and repeated observations across trial participants.
+However, the applications can extend into almost any field where the
+variability across a group/person is desired in the analysis. One such
+example is the use of mixed-effects models on published health data sets
+to explore the link between smoking and depression in which it was found
+“Smoking status is robustly associated with depression (or depressive
+symptomatology) at 1 ½ to 2 times the risk of nonsmoking across a
+variety of study designs, depression measurements, and participant
+populations” (Luger et al. 2014). In our case we wish to find
+association between a NFL coach and play performance on the field using
+the nflverse data set. Where the coaches are the random effects and
+performance being the fixed effects.</p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -666,8 +684,7 @@ pbp &lt;- nflreadr::load_pbp(2021)
 # team summaries 
 pbp |&gt;
   filter(rush == 1 | pass == 1, !is.na(down)) |&gt;
-  mutate(coach = ifelse(posteam_type == &#39;home&#39;,home_coach,away_coach),
-         point_diff = ) |&gt;
+  mutate(coach = ifelse(posteam_type == &#39;home&#39;,home_coach,away_coach)) |&gt;
   group_by(posteam, posteam_type) |&gt;
   summarize(coach_name = first(coach),
             plays = n(),
@@ -2594,6 +2611,21 @@ Y ∼ N(Xβ + o, σ^2 W^{-1})
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>
+<p>Bates, D., Mächler, M., Bolker, B., &amp; Walker, S. (2014). Fitting
+linear mixed-effects models using lme4. arXiv preprint
+arXiv:1406.5823.</p>
+<p>Schielzeth, H., Dingemanse, N. J., Nakagawa, S., Westneat, D. F.,
+Allegue, H., Teplitsky, C., … &amp; Araya‐Ajoy, Y. G. (2020). Robustness
+of linear mixed‐effects models to violations of distributional
+assumptions. Methods in ecology and evolution, 11(9), 1141-1152.</p>
+<p>Barr, D. J. (2013). Random effects structure for testing interactions
+in linear mixed-effects models. Frontiers in psychology, 4, 328.</p>
+<p>Brown, V. A. (2021). An introduction to linear mixed-effects modeling
+in R. Advances in Methods and Practices in Psychological Science, 4(1),
+251524592096035. <a href="https://doi.org/10.1177/2515245920960351" class="uri">https://doi.org/10.1177/2515245920960351</a></p>
+<p>Luger, T. M., et al. (2014). How robust is the association between
+smoking and depression in adults? A meta-analysis using linear
+mixed-effects models. Elsevier Ltd.</p>
 </div>
 
 
