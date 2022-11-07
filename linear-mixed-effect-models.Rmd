@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ## Introduction
-Intro 
+By doing an extensive review of current literature our group aims to gain an understanding of Linear Mixed-Effect Models in order to create our own models and better our understanding. To do so we will use NFL play-by-play data from the nflverse package available in R. Where we aim to model coach performance using the play performance. 
 
 ## Literature Review
 
