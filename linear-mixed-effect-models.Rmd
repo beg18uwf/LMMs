@@ -3,6 +3,8 @@ title: "Linear Mixed Effect Models"
 author: "Nick Freeland, Bernice Green, Gary Marmon"
 date: "`r Sys.Date()`"
 output: html_document
+bibliography: ref.bib
+nocite: '@*'
 ---
 
 ## Introduction
@@ -87,12 +89,3 @@ library(ggfortify)
 ### Conlusion
 
 ## References
-Bates, D., Mächler, M., Bolker, B., & Walker, S. (2014). Fitting linear mixed-effects models using lme4. arXiv preprint arXiv:1406.5823.
-
-Schielzeth, H., Dingemanse, N. J., Nakagawa, S., Westneat, D. F., Allegue, H., Teplitsky, C., ... & Araya‐Ajoy, Y. G. (2020). Robustness of linear mixed‐effects models to violations of distributional assumptions. Methods in ecology and evolution, 11(9), 1141-1152.
-
-Barr, D. J. (2013). Random effects structure for testing interactions in linear mixed-effects models. Frontiers in psychology, 4, 328.
-
-Brown, V. A. (2021). An introduction to linear mixed-effects modeling in R. Advances in Methods and Practices in Psychological Science, 4(1), 251524592096035. https://doi.org/10.1177/2515245920960351
-
-Luger, T. M., et al. (2014). How robust is the association between smoking and depression in adults? A meta-analysis using linear mixed-effects models. Elsevier Ltd.
