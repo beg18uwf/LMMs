@@ -7,37 +7,50 @@ bibliography: ref.bib
 nocite: '@*'
 ---
 
+```{r}
+
+
+```
+
+
 ## Introduction 
-#### What are LMMs? Key vocabulary
-Linear Mixed Effects Models can be used to model correlated data (Linear Mixed Effects Models in R) that often take the form of cross sectional data or logitudinal data. Cross Sectional Data feature indivduals (level 1) nested in a geographical or social context (level 2). Longitudinal data feature individuals (level 2) measures over several occasions (level 1). (Fixed and Random Effects Models: Making an informed choice) Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects model average trends, while random effects model the extent to which these trends vary across levels of some grouping factor (Brown 2021).
 
+<!-- #### What are LMMs?  -->
+<!-- Include Key vocabulary -->
+Linear Mixed-Effects Models can be used to model correlated data [@galecki2013] that often take the form of cross sectional data or longitudinal data. Cross sectional data feature individuals (level 1) nested in a geographical or social context (level 2), while longitudinal data feature individuals (level 2) measures over several occasions (level 1).[@bell2019fixed] Data can be nested in more than two levels based on the design of the study. 
 
-#### Why do we want to use LMMs?
-Until more recently the only way to handle the type of data mixed-effects model does was through repeated measures ANOVAs (Brown 2021). Mixed-effects models are much more versatile in handling variability within and across groups and can handle missing data, providing much better results than the ANOVAs (Brown 2021). 
+Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects, which account for clustering in a data set and the differeing relationships between & within clusters[@bell2019fixed]. Fixed effects model average trends, while random effects model the extent to which these trends vary across levels of some grouping factor [@brown2021introduction]. When the number of clusters is small but the number of observations per cluster is large, we can model that parameter as a fixed effect. Conversely, random effects may have a large number of clusters but a relatively small number of observations per cluster [@demidenko2013]. It is important to include the random effects in the model as fixed effects only give a partial picture of the heirarchial data as they do not reveal information about level 2 entities. Valuable information is lost about the relationship between the  [@bell2019fixed]
 
-#### How are they beneficial? Fields used? Where are they most effectively applied?
-Brown VA gives a theoretical practical account of implementing mixed-effects models and their commonalities and differences with ANOVA, showing ANOVA cannot simultaneously take multiple sources of variation into account when observations are nested across participants, which lowers the ability to detect an effect (Brown 2021). Mixed-effects modeling allows a researcher to examine the condition of interest while also considering variability within and across participants and items simultaneously and is a reasonable choice when ANOVA and multiple regression are not (Brown 2021).
+In the classical approach, all observations are assumed to be independent and identically distributed, but this assumption a=can lead to false results for clustered data. Observations between clustes are assumed independent but observations betweeen cluster are dependent as they belong to the same sub population.Mixed Effects Models can be seen as a combination of ANOVA, a fixed effects model, and VARCOMP, a random effects model.[@demidenko2013]
 
-The main application for mixed-effect models is in psychology due to the nature of their data and repeated observations across trial participants. However, the applications can extend into almost any field where the variability across a group/person is desired in the analysis. One such example is the use of mixed-effects models on published health data sets to explore the link between smoking and depression in which it was found “Smoking status is robustly associated with depression (or depressive symptomatology) at 1 ½ to 2 times the risk of nonsmoking across a variety of study designs, depression measurements, and participant populations” (Luger et al. 2014). In our case we wish to find association between a NFL coach and play performance on the field using the nflverse data set. Where the coaches are the random effects and performance being the fixed effects.  
+<!-- #### Why do we want to use LMMs? How are they beneficial? Fields used? Where are they most effectively applied? -->
 
-#### What are the limitations?
+Until more recently the only way to handle the type of data mixed-effects model does was through repeated measures ANOVAs. Mixed-effects models are much more versatile in handling variability within and across groups and can handle missing data, providing much better results than the ANOVAs. [@brown2021introduction]
+
+@brown2021introduction gives a theoretical practical account of implementing mixed-effects models and their commonalities and differences with ANOVA, showing ANOVA cannot simultaneously take multiple sources of variation into account when observations are nested across participants, which lowers the ability to detect an effect. Mixed-effects modeling allows a researcher to examine the condition of interest while also considering variability within and across participants and items simultaneously and is a reasonable choice when ANOVA and multiple regression are not.[@brown2021introduction]
+
+Linear mixed-models are most effective for clustered data with a hierarchical structure or repeated measures. They are also well-suited for time-series data, biological/medical data, and modeling shapes/images. [@demidenko2013]
+
+The main application for mixed-effect models is in psychology due to the nature of their data and repeated observations across trial participants. However, the applications can extend into almost any field where the variability across a group/person is desired in the analysis. One such example is the use of mixed-effects models on published health data sets to explore the link between smoking and depression in which it was found “Smoking status is robustly associated with depression (or depressive symptomatology) at 1 ½ to 2 times the risk of nonsmoking across a variety of study designs, depression measurements, and participant populations” [@luger2014robust]. 
+
+<!-- #### What are the limitations? -->
 
 The critical slope of mixed-effects models id also oft discussed in literature, finding failure to include the critical slope in the test of an interaction can yield very high Type I error rates (Barr 2013). "When testing interactions in mixed designs with replications, it is critical to include the random slope corresponding to the highest-order combination of within-subject factors subsumed by each interaction of interest" (Barr 2013).
 
-#### How does this apply to our project/data set?
+<!-- #### How does this apply to our project/data set? -->
 
-By doing an extensive review of current literature our group aims to gain an understanding of Linear Mixed-Effect Models in order to create our own models and better our understanding. To do so we will use NFL play-by-play data from the nflverse package available in R. Where we aim to model coach performance using the play performance. 
+By doing an extensive review of current literature our group aims to gain an understanding of Linear Mixed-Effect Models in order to create our own models and better our understanding. To do so we will use NFL play-by-play data from the nflverse package available in R. In our case we wish to find association between a NFL coach and play performance on the field using the nflverse data set, where the coaches are the random effects.   
 
 ## Methods
 
-#### What are the assumptions of this model?
+<!-- #### What are the assumptions of this model? -->
 
  The complex nature of mixed-effects models call into question the robustness of these models and brings more focus to the model assumptions. "Mixed-effects models involve complex fitting procedures and make several assumptions, in particular about the distribution of residual and random effects. Violations of these assumptions are common in real datasets, yet it is not always clear how much these violations matter to accurate and unbiased estimation" (Schielzeth et al. 2020).  Schielzeth et al. discuss the consequences of violations of these assumptions and the impact of missing random effect components on model estimates. The study found mixed-effects models to be very robust to violations of these assumptions, finding the estimates were unbiased (although imprecise) and missing random effect predictors had little effect on the fixed effect estimates but had systematic effects on the estimates of random effects (Schielzeth et al. 2020). 
 
 Many technical papers have delved into the formulation and implementation of linear mixed-effects models, many following the lead of Bates et al. paper, "Fitting linear mixed-effects models using lme4" (2014). Bates et al. outlines the creation and implementation of the lme4 package as an extension of lmer function, which has become the predominant tool in the R language for fitting linear mixed-effect models. As for most model-fitting functions in R, the model is described in an lmer call by a formula, in this case including both fixed- and random-effects terms (Bates et al. 2014). The paper describes the structure of the model, the steps in evaluating the profiled deviance or REML criterion, and the structure of classes or types that represents such a model (Bates et al. 2014). One of the more controversial design decisions of lme4 has been to omit the output of p values (these can be found using parametric bootstrapping functionality). "While the null distributions (and the sampling distributions of non-null estimates) are asymptotically normal, these distributions are not t distributed for finite size samples — nor are the corresponding null distributions of differences in scaled deviances F distributed." (Bates et al. 2014). A common problem in mixed-model inference is the lack of analytical results for parameter estimates in complex situations including unbalanced or crossed designs. (Bates et al. 2014)
 
 
-#### What is the formula for this model? 
+<!-- #### What is the formula for this model?  -->
 
 
 ## Analysis and Results
@@ -56,21 +69,25 @@ library(kableExtra)
 pbp <- nflreadr::load_pbp(2021)
 
 # team summaries 
-pbp |>
-  filter(rush == 1 | pass == 1, !is.na(down)) |>
-  mutate(coach = ifelse(posteam_type == 'home',home_coach,away_coach)) |>
-  group_by(posteam, posteam_type) |>
-  summarize(coach_name = first(coach),
+team_sum1 <- data.frame(pbp$game_id, pbp$home_coach, pbp$away_coach, pbp$posteam, pbp$posteam_type, pbp$pass, pbp$rush, pbp$epa, pbp$down, pbp$week, pbp$season_type)
+
+team_sum2 <- team_sum1 %>%
+  filter(pbp.rush == 1 | pbp.pass == 1, !is.na(pbp.down)) %>%
+  group_by (pbp.posteam, pbp.posteam_type, pbp.game_id) %>%
+  mutate(coach = ifelse(pbp.posteam_type == 'home',pbp.home_coach,pbp.away_coach)) %>%
+  mutate(opp_coach = ifelse(pbp.posteam_type == 'away',pbp.home_coach,pbp.away_coach)) %>%
+  mutate(home_adv = ifelse(pbp.posteam_type == 'home', 0, 1))%>%
+  summarize(week = first(pbp.week),
+            season_type = first(ifelse(pbp.season_type == 'REG', 0, 1)),
+            home_adv = first(home_adv),
+            coach = first(coach),
+            opp_coach = first(opp_coach),
             plays = n(),
-            pass_plays = sum(pass),
+            pass_plays = sum(pbp.pass),
             pass_pct = pass_plays / plays,
-            rush_plays = sum(rush),
-            rush_pct = rush_plays / plays,
-            epa_per_play = round(mean(epa), digits = 2)
-            ) |>
-  arrange(-epa_per_play) |>
-  kbl() %>%
-  kable_styling()
+            epa_per_play = round(mean(pbp.epa), digits = 2))
+
+
 ```
 
 ```{r, warning=FALSE, echo=T, message=FALSE, include=FALSE}
@@ -86,9 +103,28 @@ library(ggfortify)
 
 
 ```{r, warning=FALSE, echo=TRUE}
-# Load Data
+summary(team_sum2)
 
-  
+ggplot(team_sum2, aes(x = ,
+                     y = epa_per_play, 
+                     color=coach)) +
+  geom_boxplot() +
+  labs(title = "")
+
+ggplot(team_sum2, aes(x=pass_pct, y=epa_per_play, color=coach)) + geom_point()
+
+ggplot(team_sum2,aes(x=week, y=epa_per_play, color=coach)) + geom_point()
+
+ggplot(team_sum2, aes(x=plays, y=epa_per_play, color=coach)) + geom_point()
+
+
+team_sum2$season_type <- as.factor(team_sum2$season_type)
+team_sum2$home_adv <- as.factor(team_sum2$home_adv)
+
+ggplot(team_sum2,aes(x=season_type, y=epa_per_play)) + geom_boxplot()
+
+ggplot(team_sum2, aes(home_adv, epa_per_play)) + geom_boxplot()
+
 
 ```
 
@@ -97,3 +133,7 @@ library(ggfortify)
 ### Conlusion
 
 ## References
+```{r}
+```
+
+
