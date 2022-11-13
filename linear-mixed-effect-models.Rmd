@@ -49,14 +49,32 @@ Many technical papers have delved into the formulation and implementation of lin
 
 ## Analysis and Results
 ### Data and Vizualisation
-NFL offense summaries from the 2021 season including coach and home/away splits.
 
+Our data featured a play by play analysis for every game in the 2021 season. We are attempting to model the coaches effect using the epa. We first decided to aggregate the data by game and team. We are assuming that all plays are rush or pass and will be using the pass percentage (pass_pct) to model the two different play options per game. After summarizing, we end up with the following table.
+
+Variable            Meaning
+-------------       -------------------------------------------------------------------
+pbp.posteam         the team with possession of the ball (offense)
+pop.posteam_type    specifies if the possessing team is home or away
+pbp.game_id         the specific game id from the nfl
+week                week number in the season that the game was played
+season_type         flag that specifies if it is a regular (0) or post (1) season game
+home_adv            flag that specifies home (0) or away(1)
+coach               the coach of the team with possession (offensive plays)
+opp_coach           the coach of the opposing team (defensive plays)
+plays               total number of rush and pass plays given the team and game
+pass_plays          number of pass plays given the team and game
+pass_pct            the percentage of pass plays in the game calculated by pass_plays/plays
+epa_per_play        the mean of all pass and rush plays given team and game
+
+ 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 library(nflverse)
 library(tidyverse)
 library(kableExtra)
 ```
 
+NFL offense summaries from the 2021 season including coach and home/away splits.
 
 ```{r message=FALSE, warning=FALSE}
 # loading play by play data from the 2021 NFL season

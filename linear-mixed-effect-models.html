@@ -513,6 +513,75 @@ unbalanced or crossed designs. (Bates et al. 2014)</p>
 <h2>Analysis and Results</h2>
 <div id="data-and-vizualisation" class="section level3">
 <h3>Data and Vizualisation</h3>
+<p>Our data featured a play by play analysis for every game in the 2021
+season. We are attempting to model the coaches effect using the epa. We
+first decided to aggregate the data by game and team. We are assuming
+that all plays are rush or pass and will be using the pass percentage
+(pass_pct) to model the two different play options per game. After
+summarizing, we end up with the following table.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">pbp.posteam</td>
+<td align="left">the team with possession of the ball (offense)</td>
+</tr>
+<tr class="even">
+<td align="left">pop.posteam_type</td>
+<td align="left">specifies if the possessing team is home or away</td>
+</tr>
+<tr class="odd">
+<td align="left">pbp.game_id</td>
+<td align="left">the specific game id from the nfl</td>
+</tr>
+<tr class="even">
+<td align="left">week</td>
+<td align="left">week number in the season that the game was played</td>
+</tr>
+<tr class="odd">
+<td align="left">season_type</td>
+<td align="left">flag that specifies if it is a regular (0) or post (1)
+season game</td>
+</tr>
+<tr class="even">
+<td align="left">home_adv</td>
+<td align="left">flag that specifies home (0) or away(1)</td>
+</tr>
+<tr class="odd">
+<td align="left">coach</td>
+<td align="left">the coach of the team with possession (offensive
+plays)</td>
+</tr>
+<tr class="even">
+<td align="left">opp_coach</td>
+<td align="left">the coach of the opposing team (defensive plays)</td>
+</tr>
+<tr class="odd">
+<td align="left">plays</td>
+<td align="left">total number of rush and pass plays given the team and
+game</td>
+</tr>
+<tr class="even">
+<td align="left">pass_plays</td>
+<td align="left">number of pass plays given the team and game</td>
+</tr>
+<tr class="odd">
+<td align="left">pass_pct</td>
+<td align="left">the percentage of pass plays in the game calculated by
+pass_plays/plays</td>
+</tr>
+<tr class="even">
+<td align="left">epa_per_play</td>
+<td align="left">the mean of all pass and rush plays given team and
+game</td>
+</tr>
+</tbody>
+</table>
 <p>NFL offense summaries from the 2021 season including coach and
 home/away splits.</p>
 <pre class="r"><code># loading play by play data from the 2021 NFL season
