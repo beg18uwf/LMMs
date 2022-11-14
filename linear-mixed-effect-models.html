@@ -11,7 +11,7 @@
 
 <meta name="author" content="Nick Freeland, Bernice Green, Gary Marmon" />
 
-<meta name="date" content="2022-11-13" />
+<meta name="date" content="2022-11-14" />
 
 <title>Linear Mixed Effect Models</title>
 
@@ -252,6 +252,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 /* for pandoc --citeproc since 2.11 */
 div.csl-bib-body { }
@@ -298,6 +299,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -383,7 +387,7 @@ pre code {
 
 <h1 class="title toc-ignore">Linear Mixed Effect Models</h1>
 <h4 class="author">Nick Freeland, Bernice Green, Gary Marmon</h4>
-<h4 class="date">2022-11-13</h4>
+<h4 class="date">2022-11-14</h4>
 
 </div>
 
@@ -649,6 +653,151 @@ ggplot(team_sum2,aes(x=season_type, y=epa_per_play)) + geom_boxplot()</code></pr
 </div>
 <div id="statistical-modeling" class="section level3">
 <h3>Statistical Modeling</h3>
+<pre class="r"><code>epa.lmer1 = lmer(epa_per_play ~ pass_pct + plays +
+(1|coach) + (1|home_adv), data=team_sum2)</code></pre>
+<pre class="r"><code>epa.lmer1</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: epa_per_play ~ pass_pct + plays + (1 | coach) + (1 | home_adv)
+##    Data: team_sum2
+## REML criterion at convergence: -282.6747
+## Random effects:
+##  Groups   Name        Std.Dev.
+##  coach    (Intercept) 0.07242 
+##  home_adv (Intercept) 0.00000 
+##  Residual             0.17857 
+## Number of obs: 570, groups:  coach, 34; home_adv, 2
+## Fixed Effects:
+## (Intercept)     pass_pct        plays  
+##    0.181886    -0.632547     0.003293  
+## optimizer (nloptwrap) convergence code: 0 (OK) ; 0 optimizer warnings; 1 lme4 warnings</code></pre>
+<ul>
+<li>we observe the home advantage random effect approaches zero,
+concluding home advantage has a very small/no effect on the outcome of
+epa per play.</li>
+</ul>
+<pre class="r"><code>coef(epa.lmer1)</code></pre>
+<pre><code>## $coach
+##                 (Intercept)   pass_pct      plays
+## Andy Reid        0.31745529 -0.6325467 0.00329334
+## Arthur Smith     0.13324908 -0.6325467 0.00329334
+## Bill Belichick   0.20672255 -0.6325467 0.00329334
+## Brandon Staley   0.25358929 -0.6325467 0.00329334
+## Brian Flores     0.15333305 -0.6325467 0.00329334
+## Bruce Arians     0.29434008 -0.6325467 0.00329334
+## Dan Campbell     0.12732637 -0.6325467 0.00329334
+## Darrell Bevell   0.17631664 -0.6325467 0.00329334
+## David Culley     0.07378938 -0.6325467 0.00329334
+## Frank Reich      0.19929383 -0.6325467 0.00329334
+## Joe Judge        0.08865762 -0.6325467 0.00329334
+## John Harbaugh    0.17858884 -0.6325467 0.00329334
+## Jon Gruden       0.17353230 -0.6325467 0.00329334
+## Kevin Stefanski  0.17221646 -0.6325467 0.00329334
+## Kliff Kingsbury  0.20198617 -0.6325467 0.00329334
+## Kyle Shanahan    0.19310505 -0.6325467 0.00329334
+## Matt LaFleur     0.27763807 -0.6325467 0.00329334
+## Matt Nagy        0.11597062 -0.6325467 0.00329334
+## Matt Rhule       0.07728866 -0.6325467 0.00329334
+## Mike McCarthy    0.22672554 -0.6325467 0.00329334
+## Mike Tomlin      0.15133128 -0.6325467 0.00329334
+## Mike Vrabel      0.14792657 -0.6325467 0.00329334
+## Mike Zimmer      0.18160572 -0.6325467 0.00329334
+## Nick Sirianni    0.19028891 -0.6325467 0.00329334
+## Pete Carroll     0.22205669 -0.6325467 0.00329334
+## Rich Bisaccia    0.19087485 -0.6325467 0.00329334
+## Robert Saleh     0.14229443 -0.6325467 0.00329334
+## Ron Rivera       0.14352462 -0.6325467 0.00329334
+## Sean McDermott   0.29582167 -0.6325467 0.00329334
+## Sean McVay       0.23915218 -0.6325467 0.00329334
+## Sean Payton      0.09969219 -0.6325467 0.00329334
+## Urban Meyer      0.13272318 -0.6325467 0.00329334
+## Vic Fangio       0.18387753 -0.6325467 0.00329334
+## Zac Taylor       0.22183086 -0.6325467 0.00329334
+## 
+## $home_adv
+##   (Intercept)   pass_pct      plays
+## 0    0.181886 -0.6325467 0.00329334
+## 1    0.181886 -0.6325467 0.00329334
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;coef.mer&quot;</code></pre>
+<ul>
+<li>each coach is assign a different intercept, but but the fixed
+effects are the same for all coaches. This model is called a Random
+Intercept model. We are accounting for baseline differences in epa per
+play. In a Random Slope model, each coach is allowed to have a different
+intercept, as well as different slopes for the effect of number of plays
+ran and percentage of pass plays.</li>
+</ul>
+<pre class="r"><code>epa.lmer2 = lmer(epa_per_play ~ pass_pct + plays +
+(1+pass_pct|coach) + (1+plays|coach), data=team_sum2)</code></pre>
+<pre class="r"><code>coef(epa.lmer2)</code></pre>
+<pre><code>## $coach
+##                 (Intercept)   pass_pct         plays
+## Andy Reid         0.1779923 -0.5626688 -1.173023e-03
+## Arthur Smith      0.1779975 -0.6352426  5.270834e-03
+## Bill Belichick    0.1779919 -0.5883970  3.470878e-03
+## Brandon Staley    0.1779935 -0.5822025  1.783009e-03
+## Brian Flores      0.1779976 -0.6447226  3.688993e-03
+## Bruce Arians      0.1779926 -0.5698969 -7.281703e-05
+## Dan Campbell      0.1779982 -0.6464771  5.178063e-03
+## Darrell Bevell    0.1779969 -0.6257342  4.054334e-03
+## David Culley      0.1780008 -0.6617198  7.381975e-03
+## Frank Reich       0.1779967 -0.6215411  2.697445e-03
+## Joe Judge         0.1779944 -0.6376093  6.889111e-03
+## John Harbaugh     0.1779957 -0.6301710  2.702828e-03
+## Jon Gruden        0.1779971 -0.6296149  3.702847e-03
+## Kevin Stefanski   0.1779986 -0.6444862  2.945452e-03
+## Kliff Kingsbury   0.1779976 -0.6113244  3.667707e-03
+## Kyle Shanahan     0.1779952 -0.6162850  3.035698e-03
+## Matt LaFleur      0.1779950 -0.5967105 -5.993694e-05
+## Matt Nagy         0.1779999 -0.6613017  5.156608e-03
+## Matt Rhule        0.1780006 -0.6744131  6.749329e-03
+## Mike McCarthy     0.1779976 -0.6177447  1.226204e-03
+## Mike Tomlin       0.1779992 -0.6559687  3.326346e-03
+## Mike Vrabel       0.1779982 -0.6530958  3.617024e-03
+## Mike Zimmer       0.1779976 -0.6307860  3.222854e-03
+## Nick Sirianni     0.1779961 -0.6225312  2.936516e-03
+## Pete Carroll      0.1779971 -0.6195615  2.054063e-03
+## Rich Bisaccia     0.1779961 -0.6186069  3.302977e-03
+## Robert Saleh      0.1779970 -0.6305997  5.188931e-03
+## Ron Rivera        0.1779979 -0.6411348  4.655921e-03
+## Sean McDermott    0.1779957 -0.5975815 -1.686407e-03
+## Sean McVay        0.1779967 -0.6211947  6.306538e-04
+## Sean Payton       0.1779988 -0.6453380  6.838147e-03
+## Urban Meyer       0.1779984 -0.6467707  4.814211e-03
+## Vic Fangio        0.1779969 -0.6290719  3.026709e-03
+## Zac Taylor        0.1779946 -0.6028338  2.385276e-03
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;coef.mer&quot;</code></pre>
+<ul>
+<li><p>here the model is expecting different baseline levels of plays
+ran and pass_pct</p></li>
+<li><p>despite the individual variation of pass_pct, all the values are
+negative and very close to each other. We see consistency with how often
+coaches throw the ball. The variation in number of plays ran is much
+wider, ranging from -7 to 6.</p></li>
+</ul>
+<div id="testing-for-significance-between-models" class="section level4">
+<h4>Testing for significance between models</h4>
+<pre class="r"><code>epa.lmer2.full = lmer(epa_per_play ~ pass_pct + plays +
+                  (1+pass_pct|coach) + (1+plays|coach), data=team_sum2,
+                  REML=FALSE)
+
+epa.lmer2.null = lmer(epa_per_play ~ plays +
+                  (1+plays|coach), data=team_sum2,
+                  REML=FALSE)</code></pre>
+<pre class="r"><code>anova(epa.lmer2.full, epa.lmer2.null)</code></pre>
+<pre><code>## Data: team_sum2
+## Models:
+## epa.lmer2.null: epa_per_play ~ plays + (1 + plays | coach)
+## epa.lmer2.full: epa_per_play ~ pass_pct + plays + (1 + pass_pct | coach) + (1 + plays | coach)
+##                npar     AIC     BIC logLik deviance  Chisq Df Pr(&gt;Chisq)    
+## epa.lmer2.null    6 -230.55 -204.47 121.27  -242.55                         
+## epa.lmer2.full   10 -285.41 -241.96 152.71  -305.41 62.865  4  7.243e-13 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
 </div>
 <div id="conlusion" class="section level3">
 <h3>Conlusion</h3>

@@ -142,6 +142,54 @@ ggplot(team_sum2, aes(home_adv, epa_per_play)) + geom_boxplot()
 
 ### Statistical Modeling
 
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(lme4)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+epa.lmer1 = lmer(epa_per_play ~ pass_pct + plays +
+(1|coach) + (1|home_adv), data=team_sum2)
+```
+
+```{r}
+epa.lmer1
+```
+- we observe the home advantage random effect approaches zero, concluding home advantage has a very small/no effect on the outcome of epa per play. 
+
+```{r}
+coef(epa.lmer1)
+```
+- each coach is assign a different intercept, but but the fixed effects are the same for all coaches. This model is called a Random Intercept model. We are accounting for baseline differences in epa per play. In a Random Slope model, each coach is allowed to have a different intercept, as well as different slopes for the effect of number of plays ran and percentage of pass plays.
+
+```{r message=FALSE, warning=FALSE}
+epa.lmer2 = lmer(epa_per_play ~ pass_pct + plays +
+(1+pass_pct|coach) + (1+plays|coach), data=team_sum2)
+```
+
+```{r}
+coef(epa.lmer2)
+```
+- here the model is expecting different baseline levels of plays ran and pass_pct
+
+- despite the individual variation of pass_pct, all the values are negative and very close to each other. We see consistency with how often coaches throw the ball. The variation in number of plays ran is much wider, ranging from -7 to 6.
+
+#### Testing for significance between models
+
+```{r message=FALSE, warning=FALSE}
+epa.lmer2.full = lmer(epa_per_play ~ pass_pct + plays +
+                  (1+pass_pct|coach) + (1+plays|coach), data=team_sum2,
+                  REML=FALSE)
+
+epa.lmer2.null = lmer(epa_per_play ~ plays +
+                  (1+plays|coach), data=team_sum2,
+                  REML=FALSE)
+```
+```{r}
+anova(epa.lmer2.full, epa.lmer2.null)
+```
+
+
 ### Conlusion
 
 ## References
