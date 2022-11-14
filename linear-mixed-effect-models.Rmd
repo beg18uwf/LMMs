@@ -230,8 +230,8 @@ ggplot(team_sum2f, aes(x = pass_pct, y = epa_per_play, color=coach)) +
   geom_abline(slope = model_slope, intercept = model_intercept, 
               linetype = "solid", color = "black", size = 1) + 
   geom_abline(mapping = aes(slope = slopes, 
-                            intercept = intercepts2, linetype = coach), 
-              linetype = "dashed", color = "grey70", size = .4) +
+                            intercept = intercepts2, linetype = coach, color = coach), 
+              linetype = "dashed", size = .4) +
   geom_point(aes(), size = 1) +
   theme(panel.background = element_blank(),         
         panel.grid.major = element_blank(),
@@ -241,6 +241,24 @@ ggplot(team_sum2f, aes(x = pass_pct, y = epa_per_play, color=coach)) +
         axis.text = element_text(size = 14),
         axis.title = element_text(size = 14)) +
   labs (x = "Pass Percent", y = "Epa Per Play")
+
+slopes <- rep(coef(epa.lmer2f)$coach[,3], each = 16)
+model_slope <- as.numeric(fixef(epa.lmer2f)[3])
+ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=coach)) + 
+  geom_abline(slope = model_slope, intercept = model_intercept, 
+              linetype = "solid", color = "black", size = 1) + 
+  geom_abline(mapping = aes(slope = slopes, 
+                            intercept = intercepts2, linetype = coach, color = coach), 
+              linetype = "dashed", size = .4) +
+  geom_point(aes(), size = 1) +
+  theme(panel.background = element_blank(),         
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", fill = NA),
+        legend.position = "right", 
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 14)) +
+  labs (x = "Plays", y = "Epa Per Play")
 ```
 
 
@@ -296,7 +314,7 @@ ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=home_adv)) +
               linetype = "solid", color = "black", size = 1) + 
   geom_abline(mapping = aes(slope = slopes, 
                             intercept = intercepts2, linetype = coach), 
-              linetype = "dashed", color = "grey70", size = .4) +
+              linetype = "dashed", size = .4, color="grey70") +
   geom_point(aes(color=home_adv), size = 1, color = "grey70") + 
   geom_segment(aes(x = plays, xend = plays, 
                    y = epa_per_play, yend = fitted(epa.lmer3f)), 
