@@ -227,6 +227,39 @@ epa.lmer3 = lmer(epa_per_play ~  plays + home_adv +
 epa.lmer3
 ```
 
+```{r}
+#attempt at visualizing the models  random intercepts plot was too messy 
+
+# team_sum2f <- team_sum2 %>% filter(season_type==0)
+# epa.lmer1f = lmer(epa_per_play ~ pass_pct + plays +
+# (1|coach) + (1|home_adv), data=team_sum2f)
+# model_intercept <- as.numeric(fixef(epa.lmer1f)[1])
+# model_slope <- as.numeric(fixef(epa.lmer1f)[3])
+# intercepts <- rep(coef(epa.lmer1f)$coach[,1], each=16)
+# 
+# ggplot(team_sum2f, aes(x = plays, y = epa_per_play)) +
+#   geom_abline(slope = model_slope, intercept = model_intercept,
+#               linetype = "solid", color = "black", size = 1) +
+#   geom_abline(mapping = aes(slope = model_slope, intercept = intercepts),
+#               linetype = "dashed", color = "grey70", size = 1) +
+#   geom_point(aes(), size = 1, color = "grey70") +
+#   geom_segment(aes(x = plays, xend = plays,
+#   y = epa_per_play, yend = fitted(epa.lmer1f)),
+#   color = "grey70") +
+#   theme(panel.background = element_blank(),
+#         panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank(),
+#         panel.border = element_rect(colour = "black", fill = NA),
+#         legend.position = "none",
+#         axis.text = element_text(size = 14),
+#         axis.title = element_text(size = 14)) +
+#   labs (x = "Play", y = "Epa Per Play")
+```
+
+```{r}
+
+```
+
 
 ### Conlusion
 
