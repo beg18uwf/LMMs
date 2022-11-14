@@ -70,6 +70,7 @@ epa_per_play        the mean of all pass and rush plays given team and game
  
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 library(nflverse)
+library(nflplotR)
 library(tidyverse)
 library(kableExtra)
 ```
@@ -140,6 +141,32 @@ ggplot(team_sum2, aes(home_adv, epa_per_play)) + geom_boxplot()
 
 ```
 
+```{r message=FALSE, warning=FALSE}
+offense <- pbp %>%
+  dplyr::group_by(team = posteam) %>%
+  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+defense <- pbp %>%
+  dplyr::group_by(team = defteam) %>%
+  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+offense %>%
+  dplyr::inner_join(defense, by = "team") %>%
+  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  ggplot2::geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
+  nflplotR::geom_mean_lines(aes(h_var = off_epa, v_var = def_epa)) +
+  nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
+  ggplot2::labs(
+    x = "Offense EPA/play",
+    y = "Defense EPA/play",
+    title = "2021 NFL Offensive and Defensive EPA per Play"
+  ) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  ) +
+  ggplot2::scale_y_reverse()
+```
+
+
 ### Statistical Modeling
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
@@ -160,7 +187,7 @@ epa.lmer1
 ```{r}
 coef(epa.lmer1)
 ```
-- each coach is assign a different intercept, but but the fixed effects are the same for all coaches. This model is called a Random Intercept model. We are accounting for baseline differences in epa per play. In a Random Slope model, each coach is allowed to have a different intercept, as well as different slopes for the effect of number of plays ran and percentage of pass plays.
+- each coach is assigned a different intercept, but the fixed effects are the same for all coaches. This model is called a Random Intercept model; we are accounting for baseline differences in epa per play. Alternatively, in a Random Slope model, each coach is allowed to have a different intercept, as well as different slopes for the effect of number of plays ran and percentage of pass plays. We implement a Random Slope model below:
 
 ```{r message=FALSE, warning=FALSE}
 epa.lmer2 = lmer(epa_per_play ~ pass_pct + plays +
@@ -187,6 +214,17 @@ epa.lmer2.null = lmer(epa_per_play ~ plays +
 ```
 ```{r}
 anova(epa.lmer2.full, epa.lmer2.null)
+```
+- we observe statistical significance between the models
+
+
+```{r}
+epa.lmer3 = lmer(epa_per_play ~  plays + home_adv +
+                  (1+home_adv|coach) + (1+plays|coach), data=team_sum2,
+                  REML=FALSE)
+```
+```{r}
+epa.lmer3
 ```
 
 
