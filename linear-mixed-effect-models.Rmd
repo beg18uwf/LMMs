@@ -45,7 +45,7 @@ Many technical papers have delved into the formulation and implementation of lin
 
 
 <!-- #### What is the formula for this model?  -->
-
+Our basic model: $$epa = plays +  (1+plays|coach)$$
 
 ## Analysis and Results
 ### Data and Vizualisation
