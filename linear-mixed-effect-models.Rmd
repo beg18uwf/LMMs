@@ -72,6 +72,9 @@ opp_coach           the coach of the opposing team (defensive plays)
 plays               total number of rush and pass plays given the team and game
 pass_plays          number of pass plays given the team and game
 pass_pct            the percentage of pass plays in the game calculated by pass_plays/plays
+yards_gained        yards gained by an offense
+shotgun_snaps       number of snaps a team lined up in a shotgun formation
+ho_huddle_snaps     number of snaps a team used a no huddle offense
 epa_per_play        the mean of all pass and rush plays given team and game
 
  
@@ -89,7 +92,7 @@ NFL offense summaries from the 2021 season including coach and home/away splits.
 pbp <- nflreadr::load_pbp(2021)
 
 # team summaries 
-team_sum1 <- data.frame(pbp$game_id, pbp$home_coach, pbp$away_coach, pbp$posteam, pbp$posteam_type, pbp$pass, pbp$rush, pbp$epa, pbp$down, pbp$week, pbp$season_type)
+team_sum1 <- data.frame(pbp$game_id, pbp$home_coach, pbp$away_coach, pbp$posteam, pbp$posteam_type, pbp$pass, pbp$rush, pbp$epa, pbp$down, pbp$week, pbp$season_type, pbp$yards_gained, pbp$shotgun, pbp$no_huddle, pbp$yards_after_catch)
 
 team_sum2 <- team_sum1 %>%
   filter(pbp.rush == 1 | pbp.pass == 1, !is.na(pbp.down)) %>%
@@ -105,6 +108,9 @@ team_sum2 <- team_sum1 %>%
             plays = n(),
             pass_plays = sum(pbp.pass),
             pass_pct = pass_plays / plays,
+            yards_gained = sum(pbp.yards_gained),
+            shotgun_snaps = sum(pbp.shotgun),
+            no_huddle_snap = sum(pbp.no_huddle),
             epa_per_play = round(mean(pbp.epa), digits = 2))
 
 
@@ -137,6 +143,17 @@ ggplot(team_sum2,aes(x=week, y=epa_per_play, color=coach)) + geom_point()
 
 ggplot(team_sum2, aes(x=plays, y=epa_per_play, color=coach)) + geom_point()
 
+team_sum2 |>
+  ggplot(aes(y=epa_per_play, x=yards_gained)) + 
+  geom_smooth(method = "loess")
+
+team_sum2 |>
+  ggplot(aes(y=epa_per_play, x=shotgun_snaps)) + 
+  geom_smooth(method = "loess")
+
+team_sum2 |>
+  ggplot(aes(y=epa_per_play, x=no_huddle_snap)) + 
+  geom_smooth(method = "loess")
 
 team_sum2$season_type <- as.factor(team_sum2$season_type)
 team_sum2$home_adv <- as.factor(team_sum2$home_adv)
@@ -175,30 +192,51 @@ offense %>%
 
 
 ### Statistical Modeling
-
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 library(lme4)
+library(lmerTest)
 ```
+
+#### Linear Model
+```{r}
+epa.lm = lm(epa_per_play ~ pass_pct + plays + yards_gained + shotgun_snaps + no_huddle_snap, data=team_sum2)
+summary(epa.lm)
+```
+- after accounting for the other variables, the number of shotgun snaps an offense runs does not appear to significantly effect epa per play. Current model explains approximately 63% of the variance in epa per play. 
+
+```{r}
+autoplot(epa.lm)
+```
+- a few outliers are present, but the overall fit looks acceptable
+
+#### Linear Mixed Effects Model
+
+We want to account for a teams coach and if a team has home field advantage as random effects.  
 
 
 ```{r message=FALSE, warning=FALSE}
-epa.lmer1 = lmer(epa_per_play ~ pass_pct + plays +
+epa.lmer1 = lmer(epa_per_play ~ pass_pct + plays + yards_gained + no_huddle_snap + 
 (1|coach) + (1|home_adv), data=team_sum2)
 ```
 
 ```{r}
 epa.lmer1
 ```
-- we observe the home advantage random effect approaches zero, concluding home advantage has a very small/no effect on the outcome of epa per play. 
+
+#### Interpreting the Random Effects  
+
+- we observe the home advantage random effect approaches zero, concluding there is no additional change in epa per play due to home field advantage itself.  
+- we observe an additional 0.02 epa per play due to coaching  
+
 
 ```{r}
 coef(epa.lmer1)
 ```
-- each coach is assigned a different intercept, but the fixed effects are the same for all coaches. This model is called a Random Intercept model; we are accounting for baseline differences in epa per play. Alternatively, in a Random Slope model, each coach is allowed to have a different intercept, as well as different slopes for the effect of number of plays ran and percentage of pass plays. We implement a Random Slope model below:
+- each coach is assigned a different intercept, but the fixed effects are the same for all coaches. This model is called a Random Intercept model; we are accounting for baseline differences in epa per play. Alternatively, in a Random Slope model, each coach is allowed to have a different intercept, as well as different slopes for the effect of number of plays ran and percentage of pass plays, etc. We implement a Random Slope model below:
 
 ```{r message=FALSE, warning=FALSE}
-epa.lmer2 = lmer(epa_per_play ~ pass_pct + plays +
-(1+pass_pct|coach) + (1+plays|coach), data=team_sum2)
+epa.lmer2 = lmer(epa_per_play ~ pass_pct + plays + yards_gained + shotgun_snaps + no_huddle_snap +
+(1+pass_pct|coach) + (1+plays|coach) + (1+yards_gained|coach) + (1+shotgun_snaps|coach) + (1+no_huddle_snap|coach), data=team_sum2)
 ```
 
 ```{r}
@@ -206,23 +244,25 @@ coef(epa.lmer2)
 ```
 - here the model is expecting different baseline levels of plays ran and pass_pct
 
-- despite the individual variation of pass_pct, all the values are negative and very close to each other. We see consistency with how often coaches throw the ball. The variation in number of plays ran is much wider, ranging from -7 to 6.
+- despite the individual variation of pass_pct, all the values are negative and very close to each other. We see consistency with how often coaches throw the ball. The variation in number of shotgun snaps an offense runs is much wider.
 
-#### Testing for significance between models
+#### Testing for significance between models  
+*with and without home field advantage
 
 ```{r message=FALSE, warning=FALSE}
-epa.lmer2.full = lmer(epa_per_play ~ pass_pct + plays +
-                  (1+pass_pct|coach) + (1+plays|coach), data=team_sum2,
+epa.lmer2.null = lmer(epa_per_play ~ pass_pct + plays + yards_gained + shotgun_snaps + no_huddle_snap +
+                  (1+pass_pct|coach) + (1+plays|coach) + (1+yards_gained|coach) + (1+shotgun_snaps|coach) + (1+no_huddle_snap|coach),                                            data=team_sum2,
                   REML=FALSE)
 
-epa.lmer2.null = lmer(epa_per_play ~ plays +
-                  (1+plays|coach), data=team_sum2,
+epa.lmer2.full = lmer(epa_per_play ~ home_adv + pass_pct + plays + yards_gained + shotgun_snaps + no_huddle_snap +
+                  (1+home_adv|coach) + (1+pass_pct|coach) + (1+plays|coach) + (1+yards_gained|coach) + (1+shotgun_snaps|coach) + (1+no_huddle_snap|coach),                       data=team_sum2,
                   REML=FALSE)
 ```
+
 ```{r}
 anova(epa.lmer2.full, epa.lmer2.null)
 ```
-- we observe statistical significance between the models
+- we observe no statistical significance between the models, concluding the effect of home field advantage is minimal to zero.
 
 ```{r}
 team_sum2f <- team_sum2 %>% filter(season_type==0)
@@ -268,15 +308,6 @@ ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=coach)) +
   labs (x = "Plays", y = "Epa Per Play")
 ```
 
-
-```{r}
-epa.lmer3 = lmer(epa_per_play ~  plays + home_adv +
-                  (1+home_adv|coach) + (1+plays|coach), data=team_sum2,
-                  REML=FALSE)
-```
-```{r}
-epa.lmer3
-```
 
 ```{r}
 #attempt at visualizing the models  random intercepts plot was too messy
@@ -337,7 +368,9 @@ ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=home_adv)) +
 ```
 
 
-### Conlusion
+### Conclusion
+
+Using a mixed-effects approach we are able to find the additional effect a subject (a team's coach in our case) has on a offenses success, measured by epa per play. After accounting for the fixed effects plays ran, percentage of pass plays, yards gained, shotgun snaps, and no huddle snaps, our random effect coefficient for coaching showed an additional change 0.02 epa per play due to coaching and no change in epa per play due to home field advantage.
 
 ## References
 ```{r}
