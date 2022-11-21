@@ -265,15 +265,15 @@ anova(epa.lmer2.full, epa.lmer2.null)
 - we observe no statistical significance between the models, concluding the effect of home field advantage is minimal to zero.
 
 ```{r}
-team_sum2f <- team_sum2 %>% filter(season_type==0)
+team_sum2f <- team_sum2 %>% filter(season_type==0) #filtering to regular season only so amount of games per coach is equal
 epa.lmer2f = lmer(epa_per_play ~ pass_pct + plays +
 (1+pass_pct|coach) + (1+plays|coach), data=team_sum2f)
-intercepts2 <- rep(coef(epa.lmer2f)$coach[,1], each = 16)
+intercepts2 <- rep(coef(epa.lmer2f)$coach[,1], each = 16) #variables needed for plotting
 slopes <- rep(coef(epa.lmer2f)$coach[,2], each = 16)
 model_intercept <- as.numeric(fixef(epa.lmer2f)[1])
 model_slope <- as.numeric(fixef(epa.lmer2f)[2])
 
-ggplot(team_sum2f, aes(x = pass_pct, y = epa_per_play, color=coach)) + 
+ggplot(team_sum2f, aes(x = pass_pct, y = epa_per_play, color=coach)) + #plotting
   geom_abline(slope = model_slope, intercept = model_intercept, 
               linetype = "solid", color = "black", size = 1) + 
   geom_abline(mapping = aes(slope = slopes, 
@@ -289,9 +289,9 @@ ggplot(team_sum2f, aes(x = pass_pct, y = epa_per_play, color=coach)) +
         axis.title = element_text(size = 14)) +
   labs (x = "Pass Percent", y = "Epa Per Play")
 
-slopes <- rep(coef(epa.lmer2f)$coach[,3], each = 16)
+slopes <- rep(coef(epa.lmer2f)$coach[,3], each = 16) #variables needed for plots
 model_slope <- as.numeric(fixef(epa.lmer2f)[3])
-ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=coach)) + 
+ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=coach)) + #plotting
   geom_abline(slope = model_slope, intercept = model_intercept, 
               linetype = "solid", color = "black", size = 1) + 
   geom_abline(mapping = aes(slope = slopes, 
@@ -339,15 +339,15 @@ ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=coach)) +
 ```
 
 ```{r}
-epa.lmer3f = lmer(epa_per_play ~  plays + home_adv +
+epa.lmer3f = lmer(epa_per_play ~  plays + home_adv + #reducing model to regular season for equal games among coaches
                   (1+home_adv|coach) + (1+plays|coach), data=team_sum2f,
                   REML=FALSE)
-intercepts2 <- rep(coef(epa.lmer3f)$coach[,1], each = 16)
+intercepts2 <- rep(coef(epa.lmer3f)$coach[,1], each = 16) #variables for plotting
 slopes <- rep(coef(epa.lmer3f)$coach[,2], each = 16)
 model_intercept <- as.numeric(fixef(epa.lmer3f)[1])
 model_slope <- as.numeric(fixef(epa.lmer3f)[2])
 
-ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=home_adv)) + 
+ggplot(team_sum2f, aes(x = plays, y = epa_per_play, color=home_adv)) + #plotting
   geom_abline(slope = model_slope, intercept = model_intercept, 
               linetype = "solid", color = "black", size = 1) + 
   geom_abline(mapping = aes(slope = slopes, 
