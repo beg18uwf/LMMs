@@ -4,6 +4,7 @@ author: "Nick Freeland, Bernice Green, Gary Marmon"
 date: "`r Sys.Date()`"
 bibliography: ref.bib
 output: ioslides_presentation
+widescreen: true
 ---
 
 ```{r setup, include=FALSE}

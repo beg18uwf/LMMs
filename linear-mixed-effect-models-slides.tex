@@ -1,0 +1,234 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\newif\ifbibliography
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Linear Mixed Effect Models},
+  pdfauthor={Nick Freeland, Bernice Green, Gary Marmon},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Linear Mixed Effect Models}
+\author{Nick Freeland, Bernice Green, Gary Marmon}
+\date{2022-11-29}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{Overview}
+\protect\hypertarget{overview}{}
+Until more recently the only way to handle the type of data
+mixed-effects model does was through repeated measures ANOVAs.
+Mixed-effects models are much more versatile in handling variability
+within and across groups and can handle missing data, providing much
+better results than the ANOVAs. (Brown 2021)
+\end{frame}
+
+\begin{frame}{Applications}
+\protect\hypertarget{applications}{}
+The main application for mixed-effect models is in psychology due to the
+nature of their data and repeated observations across trial
+participants. However, the applications can extend into almost any field
+where the variability across a group/person is desired in the analysis.
+One such example is the use of mixed-effects models on published health
+data sets to explore the link between smoking and depression in which it
+was found ``Smoking status is robustly associated with depression (or
+depressive symptomatology) at 1 ½ to 2 times the risk of nonsmoking
+across a variety of study designs, depression measurements, and
+participant populations'' (Luger, Suls, and Vander Weg 2014).
+\end{frame}
+
+\begin{frame}{Assumptions}
+\protect\hypertarget{assumptions}{}
+The complex nature of mixed-effects models call into question the
+robustness of these models and brings more focus to the model
+assumptions. ``Mixed-effects models involve complex fitting procedures
+and make several assumptions, in particular about the distribution of
+residual and random effects. Violations of these assumptions are common
+in real datasets, yet it is not always clear how much these violations
+matter to accurate and unbiased estimation'' (Schielzeth et al.~2020).
+Schielzeth et al.~discuss the consequences of violations of these
+assumptions and the impact of missing random effect components on model
+estimates. The study found mixed-effects models to be very robust to
+violations of these assumptions, finding the estimates were unbiased
+(although imprecise) and missing random effect predictors had little
+effect on the fixed effect estimates but had systematic effects on the
+estimates of random effects (Schielzeth et al.~2020).
+\end{frame}
+
+\begin{frame}{Predicting coach preformace:}
+\protect\hypertarget{predicting-coach-preformace}{}
+Our basic model: \[epa = plays +  (1+plays|coach)\] Other variables for
+consideration: pass\_pct, yards\_gained, no\_huddle\_snap,
+shotgun\_snaps, home\_adv
+\end{frame}
+
+\begin{frame}{The Data:}
+\protect\hypertarget{the-data}{}
+epa per play by coach:
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-1-1.pdf}
+\end{frame}
+
+\begin{frame}{Plays:}
+\protect\hypertarget{plays}{}
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-2-1.pdf}
+\end{frame}
+
+\begin{frame}{Pass Pct:}
+\protect\hypertarget{pass-pct}{}
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-3-1.pdf}
+\end{frame}
+
+\begin{frame}{Team Epa Performance:}
+\protect\hypertarget{team-epa-performance}{}
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-4-1.pdf}
+\end{frame}
+
+\begin{frame}{Yards Gained:}
+\protect\hypertarget{yards-gained}{}
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-5-1.pdf}
+\end{frame}
+
+\begin{frame}{Shotgun Snaps:}
+\protect\hypertarget{shotgun-snaps}{}
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-6-1.pdf}
+\end{frame}
+
+\begin{frame}{No Huddle:}
+\protect\hypertarget{no-huddle}{}
+\includegraphics{linear-mixed-effect-models-slides_files/figure-beamer/unnamed-chunk-7-1.pdf}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-brown2021introduction}{}}%
+Brown, Violet A. 2021. {``An Introduction to Linear Mixed-Effects
+Modeling in r.''} \emph{Advances in Methods and Practices in
+Psychological Science} 4 (1): 2515245920960351.
+
+\leavevmode\vadjust pre{\hypertarget{ref-luger2014robust}{}}%
+Luger, Tana M, Jerry Suls, and Mark W Vander Weg. 2014. {``How Robust Is
+the Association Between Smoking and Depression in Adults? A
+Meta-Analysis Using Linear Mixed-Effects Models.''} \emph{Addictive
+Behaviors} 39 (10): 1418--29.
+
+\end{CSLReferences}
+\end{frame}
+
+\end{document}
