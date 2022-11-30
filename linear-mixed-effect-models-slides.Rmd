@@ -3,7 +3,9 @@ title: "Linear Mixed Effect Models"
 author: "Nick Freeland, Bernice Green, Gary Marmon"
 date: "`r Sys.Date()`"
 bibliography: ref.bib
-output: slidy_presentation
+output: 
+  slidy_presentation:
+    theme: journal
 ---
 
 ```{r setup, include=FALSE}
@@ -66,7 +68,7 @@ Our basic model: $$epa = plays +  (1+plays|coach)$$
 - Parentheses indicate variable slopes and intercepts
 - Other variables for consideration: pass_pct, yards_gained, no_huddle_snap, shotgun_snaps, home_adv
 
-## The Data:
+## The Data: 
 epa per play by coach:
 
 ```{r}
@@ -77,7 +79,7 @@ ggplot(team_sum2, aes(x = ,
   labs(title = "")
 ```
 
-## Team Epa Performance:
+## Team Epa Performance: 
 ```{r message=FALSE, warning=FALSE}
 offense <- pbp %>%
   dplyr::group_by(team = posteam) %>%
