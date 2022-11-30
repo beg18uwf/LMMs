@@ -3,8 +3,7 @@ title: "Linear Mixed Effect Models"
 author: "Nick Freeland, Bernice Green, Gary Marmon"
 date: "`r Sys.Date()`"
 bibliography: ref.bib
-output: ioslides_presentation
-widescreen: true
+output: slidy_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -61,6 +60,7 @@ Other variables for consideration: pass_pct, yards_gained, no_huddle_snap, shotg
 
 ## The Data:
 epa per play by coach:
+
 ```{r}
 ggplot(team_sum2, aes(x = ,
                      y = epa_per_play, 
