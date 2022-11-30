@@ -6,7 +6,7 @@ output: html_document
 bibliography: ref.bib
 nocite: '@*'
 ---
-## Slides
+## Presentation
 
 [Link to slides](linear-mixed-effect-models-slides.html)
  
