@@ -6,7 +6,10 @@ output: html_document
 bibliography: ref.bib
 nocite: '@*'
 ---
+## Slides
 
+[Link to slides](linear-mixed-effect-models-slides.html)
+ 
 ## Introduction 
 
 <!-- #### What are LMMs?  -->
@@ -29,7 +32,7 @@ The main application for mixed-effect models is in psychology due to the nature 
 
 <!-- #### What are the limitations? -->
 
-The critical slope of mixed-effects models id also oft discussed in literature, finding failure to include the critical slope in the test of an interaction can yield very high Type I error rates (Barr 2013). "When testing interactions in mixed designs with replications, it is critical to include the random slope corresponding to the highest-order combination of within-subject factors subsumed by each interaction of interest" (Barr 2013).
+The critical slope of mixed-effects models is also often discussed in literature, finding failure to include the critical slope in the test of an interaction can yield very high Type I error rates (Barr 2013). "When testing interactions in mixed designs with replications, it is critical to include the random slope corresponding to the highest-order combination of within-subject factors subsumed by each interaction of interest" (Barr 2013).
 
 <!-- #### How does this apply to our project/data set? -->
 

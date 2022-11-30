@@ -1,0 +1,126 @@
+---
+title: "Linear Mixed Effect Models"
+author: "Nick Freeland, Bernice Green, Gary Marmon"
+date: "`r Sys.Date()`"
+bibliography: ref.bib
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(nflverse)
+library(nflplotR)
+library(kableExtra)
+# loading packages 
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(ggrepel)
+library(dslabs)
+library(GLMsData)
+library(ggfortify)
+# loading play by play data from the 2021 NFL season
+pbp <- nflreadr::load_pbp(2021)
+
+# team summaries 
+team_sum1 <- data.frame(pbp$game_id, pbp$home_coach, pbp$away_coach, pbp$posteam, pbp$posteam_type, pbp$pass, pbp$rush, pbp$epa, pbp$down, pbp$week, pbp$season_type, pbp$yards_gained, pbp$shotgun, pbp$no_huddle, pbp$yards_after_catch)
+
+team_sum2 <- team_sum1 %>%
+  filter(pbp.rush == 1 | pbp.pass == 1, !is.na(pbp.down)) %>%
+  group_by (pbp.posteam, pbp.posteam_type, pbp.game_id) %>%
+  mutate(coach = ifelse(pbp.posteam_type == 'home',pbp.home_coach,pbp.away_coach)) %>%
+  mutate(opp_coach = ifelse(pbp.posteam_type == 'away',pbp.home_coach,pbp.away_coach)) %>%
+  mutate(home_adv = ifelse(pbp.posteam_type == 'home', 0, 1))%>%
+  summarize(week = first(pbp.week),
+            season_type = first(ifelse(pbp.season_type == 'REG', 0, 1)),
+            home_adv = first(home_adv),
+            coach = first(coach),
+            opp_coach = first(opp_coach),
+            plays = n(),
+            pass_plays = sum(pbp.pass),
+            pass_pct = pass_plays / plays,
+            yards_gained = sum(pbp.yards_gained),
+            shotgun_snaps = sum(pbp.shotgun),
+            no_huddle_snap = sum(pbp.no_huddle),
+            epa_per_play = round(mean(pbp.epa), digits = 2))
+```
+
+## Overview
+Until more recently the only way to handle the type of data mixed-effects model does was through repeated measures ANOVAs. Mixed-effects models are much more versatile in handling variability within and across groups and can handle missing data, providing much better results than the ANOVAs. [@brown2021introduction]
+
+## Applications
+The main application for mixed-effect models is in psychology due to the nature of their data and repeated observations across trial participants. However, the applications can extend into almost any field where the variability across a group/person is desired in the analysis. One such example is the use of mixed-effects models on published health data sets to explore the link between smoking and depression in which it was found “Smoking status is robustly associated with depression (or depressive symptomatology) at 1 ½ to 2 times the risk of nonsmoking across a variety of study designs, depression measurements, and participant populations” [@luger2014robust].
+
+## Assumptions
+The complex nature of mixed-effects models call into question the robustness of these models and brings more focus to the model assumptions. "Mixed-effects models involve complex fitting procedures and make several assumptions, in particular about the distribution of residual and random effects. Violations of these assumptions are common in real datasets, yet it is not always clear how much these violations matter to accurate and unbiased estimation" (Schielzeth et al. 2020).  Schielzeth et al. discuss the consequences of violations of these assumptions and the impact of missing random effect components on model estimates. The study found mixed-effects models to be very robust to violations of these assumptions, finding the estimates were unbiased (although imprecise) and missing random effect predictors had little effect on the fixed effect estimates but had systematic effects on the estimates of random effects (Schielzeth et al. 2020).
+
+## Predicting coach preformace:
+Our basic model: $$epa = plays +  (1+plays|coach)$$
+Other variables for consideration: pass_pct, yards_gained, no_huddle_snap, shotgun_snaps, home_adv
+
+## The Data:
+epa per play by coach:
+```{r}
+ggplot(team_sum2, aes(x = ,
+                     y = epa_per_play, 
+                     color=coach)) +
+  geom_boxplot() +
+  labs(title = "")
+```
+
+## Plays:
+```{r}
+ggplot(team_sum2, aes(x=plays, y=epa_per_play, color=coach)) + geom_point()
+```
+
+## Pass Pct:
+```{r}
+ggplot(team_sum2, aes(x=pass_pct, y=epa_per_play, color=coach)) + geom_point()
+```
+
+## Team Epa Performance:
+```{r message=FALSE, warning=FALSE}
+offense <- pbp %>%
+  dplyr::group_by(team = posteam) %>%
+  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+defense <- pbp %>%
+  dplyr::group_by(team = defteam) %>%
+  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+offense %>%
+  dplyr::inner_join(defense, by = "team") %>%
+  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  ggplot2::geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
+  nflplotR::geom_mean_lines(aes(h_var = off_epa, v_var = def_epa)) +
+  nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
+  ggplot2::labs(
+    x = "Offense EPA/play",
+    y = "Defense EPA/play",
+    title = "2021 NFL Offensive and Defensive EPA per Play"
+  ) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  ) +
+  ggplot2::scale_y_reverse()
+```
+
+## Yards Gained:
+```{r message=FALSE, warning=FALSE}
+team_sum2 |>
+  ggplot(aes(y=epa_per_play, x=yards_gained)) + 
+  geom_smooth(method = "loess")
+```
+
+## Shotgun Snaps:
+```{r message=FALSE, warning=FALSE}
+team_sum2 |>
+  ggplot(aes(y=epa_per_play, x=shotgun_snaps)) + 
+  geom_smooth(method = "loess")
+```
+
+## No Huddle:
+```{r message=FALSE, warning=FALSE}
+team_sum2 |>
+  ggplot(aes(y=epa_per_play, x=no_huddle_snap)) + 
+  geom_smooth(method = "loess")
+```
