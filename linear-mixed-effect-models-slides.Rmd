@@ -48,15 +48,23 @@ team_sum2 <- team_sum1 %>%
 ## Overview
 Until more recently the only way to handle the type of data mixed-effects model does was through repeated measures ANOVAs. Mixed-effects models are much more versatile in handling variability within and across groups and can handle missing data, providing much better results than the ANOVAs. [@brown2021introduction]
 
+- Mixed-effects models more versatile with missing data and generally better predictions 
+
 ## Applications
 The main application for mixed-effect models is in psychology due to the nature of their data and repeated observations across trial participants. However, the applications can extend into almost any field where the variability across a group/person is desired in the analysis. One such example is the use of mixed-effects models on published health data sets to explore the link between smoking and depression in which it was found “Smoking status is robustly associated with depression (or depressive symptomatology) at 1 ½ to 2 times the risk of nonsmoking across a variety of study designs, depression measurements, and participant populations” [@luger2014robust].
+
+- Mixed effects models: regression with variability accross groups
 
 ## Assumptions
 The complex nature of mixed-effects models call into question the robustness of these models and brings more focus to the model assumptions. "Mixed-effects models involve complex fitting procedures and make several assumptions, in particular about the distribution of residual and random effects. Violations of these assumptions are common in real datasets, yet it is not always clear how much these violations matter to accurate and unbiased estimation" (Schielzeth et al. 2020).  Schielzeth et al. discuss the consequences of violations of these assumptions and the impact of missing random effect components on model estimates. The study found mixed-effects models to be very robust to violations of these assumptions, finding the estimates were unbiased (although imprecise) and missing random effect predictors had little effect on the fixed effect estimates but had systematic effects on the estimates of random effects (Schielzeth et al. 2020).
 
+- Mixed-effects models offer good prediction even if assumptions on distribution are violated 
+
 ## Predicting coach preformace:
 Our basic model: $$epa = plays +  (1+plays|coach)$$
-Other variables for consideration: pass_pct, yards_gained, no_huddle_snap, shotgun_snaps, home_adv
+
+- Parentheses indicate variable slopes and intercepts
+- Other variables for consideration: pass_pct, yards_gained, no_huddle_snap, shotgun_snaps, home_adv
 
 ## The Data:
 epa per play by coach:
@@ -67,16 +75,6 @@ ggplot(team_sum2, aes(x = ,
                      color=coach)) +
   geom_boxplot() +
   labs(title = "")
-```
-
-## Plays:
-```{r}
-ggplot(team_sum2, aes(x=plays, y=epa_per_play, color=coach)) + geom_point()
-```
-
-## Pass Pct:
-```{r}
-ggplot(team_sum2, aes(x=pass_pct, y=epa_per_play, color=coach)) + geom_point()
 ```
 
 ## Team Epa Performance:
@@ -103,6 +101,16 @@ offense %>%
     plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
   ) +
   ggplot2::scale_y_reverse()
+```
+
+## Plays:
+```{r}
+ggplot(team_sum2, aes(x=plays, y=epa_per_play, color=coach)) + geom_point()
+```
+
+## Pass Pct:
+```{r}
+ggplot(team_sum2, aes(x=pass_pct, y=epa_per_play, color=coach)) + geom_point()
 ```
 
 ## Yards Gained:
